@@ -7,6 +7,8 @@ export type Input = Buffer | string | number | Uint8Array | BN | List | null
 export interface List extends Array<Input> {}
 
 export interface Decoded {
-  data: Buffer | Buffer[]
+  data: Buffer | NestedBufferArray
   remainder: Buffer
 }
+
+export interface NestedBufferArray extends Array<Buffer | NestedBufferArray> {}
