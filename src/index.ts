@@ -9,7 +9,7 @@ export interface Decoded {
   remainder: Uint8Array
 }
 
-function hexToArray(hex: string) {
+function hexToBytes(hex: string) {
   hex = hex.startsWith('0x') ? hex.slice(2) : hex
   hex = hex.length & 1 ? `0${hex}` : hex
   hex = Number(hex) === 0 ? '' : hex
@@ -21,17 +21,16 @@ function hexToArray(hex: string) {
   return result
 }
 
-function intToBytes(num: number | bigint) {
-  const hex = num.toString(16)
-  return hexToArray(hex)
+function numberToBytes(num: number | bigint) {
+  return hexToBytes(num.toString(16))
 }
 
-function utf8ToArray(utf: string): Uint8Array {
+function utf8ToBytes(utf: string): Uint8Array {
   // @ts-ignore
   return new TextEncoder().encode(utf)
 }
 
-function concatTypedArrays(...arrays: Uint8Array[]): Uint8Array {
+function concatBytes(...arrays: Uint8Array[]): Uint8Array {
   if (arrays.length === 1) return arrays[0]
   const length = arrays.reduce((a, arr) => a + arr.length, 0)
   const result = new Uint8Array(length)
@@ -43,13 +42,45 @@ function concatTypedArrays(...arrays: Uint8Array[]): Uint8Array {
   return result
 }
 
-function arrayToHex(uint8a: Uint8Array): string {
+function bytesToHex(uint8a: Uint8Array): string {
   // pre-caching chars could speed this up 6x.
   let hex = ''
   for (let i = 0; i < uint8a.length; i++) {
     hex += uint8a[i].toString(16).padStart(2, '0')
   }
   return hex
+}
+
+/** Check if a string is prefixed by 0x */
+function isHexPrefixed(str: string): boolean {
+  return str.slice(0, 2) === '0x'
+}
+
+/** Removes 0x from a given String */
+function stripHexPrefix(str: string): string {
+  if (typeof str !== 'string') {
+    return str
+  }
+  return isHexPrefixed(str) ? str.slice(2) : str
+}
+
+/** Transform an integer into its hexadecimal value */
+function numberToHexSigned(integer: number): string {
+  if (integer < 0) {
+    throw new Error('Invalid integer as argument, must be unsigned!')
+  }
+  const hex = integer.toString(16)
+  return hex.length % 2 ? `0${hex}` : hex
+}
+
+/** Transform an integer into a Uint8Array */
+function numberToBytesSigned(integer: number): Uint8Array {
+  return hexToBytes(numberToHexSigned(integer))
+}
+
+/** Pad a string to be even */
+function padToEven(a: string): string {
+  return a.length % 2 ? `0${a}` : a
 }
 
 /**
@@ -64,13 +95,13 @@ export function encode(input: Input): Uint8Array {
     for (let i = 0; i < input.length; i++) {
       output.push(encode(input[i]))
     }
-    const buf = concatTypedArrays(...output)
-    return concatTypedArrays(...[encodeLength(buf.length, 192), buf])
+    const buf = concatBytes(...output)
+    return concatBytes(...[encodeLength(buf.length, 192), buf])
   } else {
     const inputBuf = toBuffer(input)
     return inputBuf.length === 1 && inputBuf[0] < 128
       ? inputBuf
-      : concatTypedArrays(...[encodeLength(inputBuf.length, 128), inputBuf])
+      : concatBytes(...[encodeLength(inputBuf.length, 128), inputBuf])
   }
 }
 
@@ -80,7 +111,7 @@ export function encode(input: Input): Uint8Array {
  * @param base The base to parse the integer into
  */
 function safeParseInt(v: Uint8Array, base: number): number {
-  const vv = arrayToHex(v)
+  const vv = bytesToHex(v)
   if (vv.slice(0, 2) === '00') {
     throw new Error('invalid RLP: extra zeros')
   }
@@ -91,10 +122,10 @@ function encodeLength(len: number, offset: number): Uint8Array {
   if (len < 56) {
     return Uint8Array.from([len + offset])
   } else {
-    const hexLength = intToHex(len)
+    const hexLength = numberToHexSigned(len)
     const lLength = hexLength.length / 2
-    const firstByte = intToHex(offset + 55 + lLength)
-    return hexToArray(firstByte + hexLength)
+    const firstByte = numberToHexSigned(offset + 55 + lLength)
+    return hexToBytes(firstByte + hexLength)
   }
 }
 
@@ -239,53 +270,20 @@ function _decode(input: Uint8Array): Decoded {
   }
 }
 
-/** Check if a string is prefixed by 0x */
-function isHexPrefixed(str: string): boolean {
-  return str.slice(0, 2) === '0x'
-}
-
-/** Removes 0x from a given String */
-function stripHexPrefix(str: string): string {
-  if (typeof str !== 'string') {
-    return str
-  }
-  return isHexPrefixed(str) ? str.slice(2) : str
-}
-
-/** Transform an integer into its hexadecimal value */
-function intToHex(integer: number): string {
-  if (integer < 0) {
-    throw new Error('Invalid integer as argument, must be unsigned!')
-  }
-  const hex = integer.toString(16)
-  return hex.length % 2 ? `0${hex}` : hex
-}
-
-/** Pad a string to be even */
-function padToEven(a: string): string {
-  return a.length % 2 ? `0${a}` : a
-}
-
-/** Transform an integer into a Uint8Array */
-function intToBuffer(integer: number): Uint8Array {
-  const hex = intToHex(integer)
-  return hexToArray(hex)
-}
-
 /** Transform anything into a Buffer */
 function toBuffer(v: Input): Uint8Array {
   if (!(v instanceof Uint8Array)) {
     if (typeof v === 'string') {
       if (isHexPrefixed(v)) {
-        return hexToArray(padToEven(stripHexPrefix(v)))
+        return hexToBytes(padToEven(stripHexPrefix(v)))
       } else {
-        return utf8ToArray(v)
+        return utf8ToBytes(v)
       }
     } else if (typeof v === 'number') {
       if (!v) {
         return Uint8Array.from([])
       } else {
-        return intToBuffer(v)
+        return numberToBytesSigned(v)
       }
     } else if (v === null || v === undefined) {
       return Uint8Array.from([])
@@ -293,7 +291,7 @@ function toBuffer(v: Input): Uint8Array {
       return Uint8Array.from(v as any)
     } else if (typeof v === 'bigint') {
       // converts a BN to a Uint8Array
-      return intToBytes(v)
+      return numberToBytes(v)
     } else {
       throw new Error('invalid type')
     }
