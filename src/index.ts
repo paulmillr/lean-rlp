@@ -1,5 +1,10 @@
 export type Input = string | number | Uint8Array | bigint | List | null
 
+const txt = {
+  // @ts-ignore
+  TextEncoder: typeof TextEncoder === 'undefined' ? require('util') : TextEncoder,
+}
+
 // Use interface extension instead of type alias to
 // make circular declaration possible.
 export interface List extends Array<Input> {}
@@ -27,7 +32,7 @@ function numberToBytes(num: number | bigint) {
 
 function utf8ToBytes(utf: string): Uint8Array {
   // @ts-ignore
-  return new TextEncoder().encode(utf)
+  return new txt.TextEncoder().encode(utf)
 }
 
 function concatBytes(...arrays: Uint8Array[]): Uint8Array {

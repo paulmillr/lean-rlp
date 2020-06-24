@@ -21,14 +21,20 @@ function hexToArray(hex: string): Uint8Array {
   return array
 }
 
+const txt = {
+  // @ts-ignore
+  TextEncoder: typeof TextEncoder === 'undefined' ? require('util') : TextEncoder,
+  TextDecoder: typeof TextDecoder === 'undefined' ? require('util') : TextDecoder,
+}
+
 function utf8ToArray(utf: string): Uint8Array {
   // @ts-ignore
-  return new TextEncoder().encode(utf)
+  return new txt.TextEncoder().encode(utf)
 }
 
 function arrayToUtf8(ui8a: Uint8Array): string {
   // @ts-ignore
-  return new TextDecoder().decode(ui8a)
+  return new txt.TextDecoder().decode(ui8a)
 }
 
 describe('invalid rlps', function() {
