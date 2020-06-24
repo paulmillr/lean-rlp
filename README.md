@@ -1,9 +1,24 @@
+# lean-rlp
+
+Node+Browser-friendly fork of RLP with following changes:
+
+- Removes dependency on bn.js, which makes library zero-dep
+- Replaces bigints from bn.js with native BigInts
+- Replaces all instances of `Buffer` usage with `Uint8Array` - which is a superclass of `Buffer`,
+  which makes rlp browser-friendly
+
+Install via:
+
+> npm install lean-rlp
+
+---
+
 # SYNOPSIS
 
-[![NPM Package](https://img.shields.io/npm/v/rlp.svg)](https://www.npmjs.org/package/rlp)
-[![Actions Status](https://github.com/ethereumjs/rlp/workflows/Build/badge.svg)](https://github.com/ethereumjs/rlp/actions)
-[![Coverage Status](https://img.shields.io/coveralls/ethereumjs/rlp.svg)](https://coveralls.io/r/ethereumjs/rlp)
-[![Gitter](https://img.shields.io/gitter/room/ethereum/ethereumjs-lib.svg)](https://gitter.im/ethereum/ethereumjs-lib)
+[![NPM Package](https://img.shields.io/npm/v/rlp.svg?style=flat-square)](https://www.npmjs.org/package/rlp)
+[![Build Status](https://img.shields.io/travis/ethereumjs/rlp.svg?branch=master&style=flat-square)](https://travis-ci.org/ethereumjs/rlp)
+[![Coverage Status](https://img.shields.io/coveralls/ethereumjs/rlp.svg?style=flat-square)](https://coveralls.io/r/ethereumjs/rlp)
+[![Gitter](https://img.shields.io/gitter/room/ethereum/ethereumjs-lib.svg?style=flat-square)](https://gitter.im/ethereum/ethereumjs-lib) or #ethereumjs on freenode
 
 [Recursive Length](https://github.com/ethereum/wiki/wiki/RLP) Prefix Encoding for node.js.
 
@@ -33,7 +48,7 @@ assert.deepEqual(nestedList, decoded)
 
 ## CLI
 
-`rlp decode <hex string>`  
+`rlp decode <hex string>`
 `rlp encode <json String>`
 
 ## TESTS
