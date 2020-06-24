@@ -3,9 +3,14 @@ import { exec } from 'child_process'
 import * as RLP from '../dist'
 import * as vm from 'vm'
 
+const txt = {
+  // @ts-ignore
+  TextDecoder: typeof TextDecoder === 'undefined' ? require('util').TextDecoder : TextDecoder,
+}
+
 function arrayToUtf8(ui8a: Uint8Array): string {
   // @ts-ignore
-  return new TextDecoder().decode(ui8a)
+  return new txt.TextDecoder().decode(ui8a)
 }
 
 describe('Distribution:', function() {
