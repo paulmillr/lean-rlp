@@ -1,6 +1,6 @@
 {
   "name": "lean-rlp",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "description": "Fork of RLP without deps with browser support (Recursive Length Prefix)",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "tsc -p ./tsconfig.prod.json",
-    "prepublishOnly": "npm run test && npm run build",
+    "prepublishOnly": "npm run build",
     "coverage": "npm run build && nyc --reporter=lcov mocha --reporter=spec --require ts-node/register test/*.spec.ts",
     "format": "prettier --list-different **/*.{ts,json,md,gql}",
     "format:fix": "prettier --write **/*.{ts,json,md,gql}",
