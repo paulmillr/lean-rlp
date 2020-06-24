@@ -1,6 +1,5 @@
 import * as assert from 'assert'
 import * as RLP from '../src'
-import { TextDecoder } from 'util'
 
 function arrayToHex(uint8a: Uint8Array): string {
   // pre-caching chars could speed this up 6x.
@@ -24,6 +23,7 @@ function hexToArray(hex: string): Uint8Array {
 const txt = {
   // @ts-ignore
   TextEncoder: typeof TextEncoder === 'undefined' ? require('util').TextEncoder : TextEncoder,
+  // @ts-ignore
   TextDecoder: typeof TextDecoder === 'undefined' ? require('util').TextDecoder : TextDecoder,
 }
 
