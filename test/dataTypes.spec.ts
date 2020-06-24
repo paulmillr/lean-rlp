@@ -23,8 +23,8 @@ function hexToArray(hex: string): Uint8Array {
 
 const txt = {
   // @ts-ignore
-  TextEncoder: typeof TextEncoder === 'undefined' ? require('util') : TextEncoder,
-  TextDecoder: typeof TextDecoder === 'undefined' ? require('util') : TextDecoder,
+  TextEncoder: typeof TextEncoder === 'undefined' ? require('util').TextEncoder : TextEncoder,
+  TextDecoder: typeof TextDecoder === 'undefined' ? require('util').TextDecoder : TextDecoder,
 }
 
 function utf8ToArray(utf: string): Uint8Array {

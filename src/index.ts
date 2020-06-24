@@ -2,7 +2,7 @@ export type Input = string | number | Uint8Array | bigint | List | null
 
 const txt = {
   // @ts-ignore
-  TextEncoder: typeof TextEncoder === 'undefined' ? require('util') : TextEncoder,
+  TextEncoder: typeof TextEncoder === 'undefined' ? require('util').TextEncoder : TextEncoder,
 }
 
 // Use interface extension instead of type alias to
