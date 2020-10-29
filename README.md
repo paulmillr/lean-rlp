@@ -1,6 +1,6 @@
-# lean-rlp
+# micro-rlp
 
-Node+Browser-friendly fork of RLP with following changes:
+Node+Browser-friendly fork of [rlp](https://github.com/ethereumjs/rlp) with following changes:
 
 - Removes dependency on bn.js, which makes library zero-dep
 - Replaces bigints from bn.js with native BigInts
@@ -9,7 +9,7 @@ Node+Browser-friendly fork of RLP with following changes:
 
 Install via:
 
-> npm install lean-rlp
+> npm install micro-rlp
 
 ---
 
