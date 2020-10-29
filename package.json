@@ -1,6 +1,6 @@
 {
   "name": "micro-rlp",
-  "version": "2.2.7",
+  "version": "2.2.8",
   "description": "Better RLP: 0 deps + with browser support (Recursive Length Prefix)",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
