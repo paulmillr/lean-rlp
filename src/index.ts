@@ -224,6 +224,8 @@ function _decode(input: Uint8Array): Decoded {
       remainder: input.slice(length),
     }
   } else if (firstByte <= 0xbf) {
+    // string is greater than 55 bytes long. A single byte with the value (0xb7 plus the length of the length),
+    // followed by the length, followed by the string
     llength = firstByte - 0xb6
     if (input.length - 1 < llength) {
       throw new Error('invalid RLP: not enough bytes for string length')
