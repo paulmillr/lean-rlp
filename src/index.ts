@@ -15,7 +15,7 @@ export interface Decoded {
 }
 
 function hexToBytes(hex: string) {
-  hex = hex.startsWith('0x') ? hex.slice(2) : hex
+  hex = hex.slice(0, 2) === '0x' ? hex.slice(2) : hex
   hex = hex.length & 1 ? `0${hex}` : hex
   hex = Number(hex) === 0 ? '' : hex
   const len = hex.length
@@ -51,7 +51,7 @@ function bytesToHex(uint8a: Uint8Array): string {
   // pre-caching chars could speed this up 6x.
   let hex = ''
   for (let i = 0; i < uint8a.length; i++) {
-    hex += uint8a[i].toString(16).padStart(2, '0')
+    hex += padToEven(uint8a[i].toString(16));
   }
   return hex
 }
@@ -120,7 +120,7 @@ function safeParseInt(v: Uint8Array, base: number): number {
   if (vv.slice(0, 2) === '00') {
     throw new Error('invalid RLP: extra zeros')
   }
-  return Number.parseInt(vv, base)
+  return parseInt(vv, base)
 }
 
 function encodeLength(len: number, offset: number): Uint8Array {
@@ -225,10 +225,16 @@ function _decode(input: Uint8Array): Decoded {
     }
   } else if (firstByte <= 0xbf) {
     llength = firstByte - 0xb6
+    if (input.length - 1 < llength) {
+      throw new Error('invalid RLP: not enough bytes for string length')
+    }
     length = safeParseInt(input.slice(1, llength), 16)
+    if (length <= 55) {
+      throw new Error('invalid RLP: expected string length to be greater than 55')
+    }
     data = input.slice(llength, length + llength)
     if (data.length < length) {
-      throw new Error('invalid RLP')
+      throw new Error('invalid RLP: not enough bytes for string')
     }
 
     return {

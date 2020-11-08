@@ -1,6 +1,6 @@
 {
   "name": "rlp",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "description": "Recursive Length Prefix Encoding Module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -65,7 +65,7 @@
     "karma-chrome-launcher": "^2.0.0",
     "karma-firefox-launcher": "^1.0.0",
     "karma-mocha": "^2.0.0",
-    "karma-typescript": "^4.1.1",
+    "karma-typescript": "^5.2.0",
     "mocha": "7.1.2",
     "nyc": "^15.0.1",
     "prettier": "^1.15.2",
@@ -75,6 +75,6 @@
     "typestrict": "^1.0.1"
   },
   "bin": {
-    "rlp": "./bin/rlp"
+    "rlp": "bin/rlp"
   }
 }
