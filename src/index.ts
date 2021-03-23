@@ -17,7 +17,6 @@ export interface Decoded {
 function hexToBytes(hex: string) {
   hex = hex.slice(0, 2) === '0x' ? hex.slice(2) : hex
   hex = hex.length & 1 ? `0${hex}` : hex
-  hex = Number(hex) === 0 ? '' : hex
   const len = hex.length
   const result = new Uint8Array(len / 2)
   for (let i = 0, j = 0; i < len - 1; i += 2, j++) {
